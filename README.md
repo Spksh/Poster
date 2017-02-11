@@ -1,6 +1,5 @@
 # TODO
 - README.md
-- LICENSE.md
 - error handling for scripts, dump position out
 - storage plugins, e.g. azure blob, s3
     - http://benfoster.io/blog/monitoring-files-in-azure-blob-storage
