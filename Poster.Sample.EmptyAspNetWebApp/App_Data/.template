@@ -1,0 +1,22 @@
+﻿@{reference Microsoft.CSharp}
+@{import System}
+
+@{ 
+	Model.CurrentDate = DateTime.UtcNow;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>@{Model.Title}</title>
+</head>
+<body>
+
+<h1>@{Model.Title}</h1>
+<h2>@{Model.Name} @ @{Model.CurrentDate}</h2>
+
+@{Model.Content}
+
+</body>
+</html>
