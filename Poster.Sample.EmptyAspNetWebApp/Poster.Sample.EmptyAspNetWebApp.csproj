@@ -78,6 +78,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="404.html" />
+    <Content Include="500.html" />
     <Content Include="packages.config" />
     <Content Include="App_Data\.md" />
     <Content Include="App_Data\.published" />
