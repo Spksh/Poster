@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading;
@@ -31,13 +32,28 @@ namespace Poster.Core
                         publishedDocumentCollection = store.ReadPublishedDocumentCollection(fileName, encoding);
 
                         // We don't cache responses for non-existent files 
-                        if (publishedDocumentCollection == null)
+                        if (publishedDocumentCollection == null || !publishedDocumentCollection.Any())
                         {
                             return null;
                         }
 
-                        // We need to flush this out of the cache if the underlying directory is changed
-                        CacheItemPolicy expiry = publishedDocumentCollection.Expiry ?? new CacheItemPolicy { AbsoluteExpiration = DateTime.UtcNow.AddSeconds(15) }; // TODO: Config 
+                        // We need to flush this out of the cache if the underlying file is changed, so we hope the IContentStore returns a decent ChangeMonitor
+                        CacheItemPolicy expiry = publishedDocumentCollection.Expiry ?? new CacheItemPolicy();
+
+                        // We support "future" publish dates
+                        // Our PublishedDocumentCollection will be evicted from cache when the next "future" date is reached
+                        DateTime now = DateTime.UtcNow;
+
+                        // The collection contains potentially thousands of documents
+                        // We expect the collection to be sorted by DatePublished, descending
+                        // Find the first document with a DatePublished greater than now
+                        PublishedDocument publishedDocument = publishedDocumentCollection.TakeWhile(p => p.DatePublished > now).FirstOrDefault();
+
+                        // If the IContentStore has set an expiry *greater* than the next DatePublished, pull that value back into range
+                        if (publishedDocument != null && publishedDocument.DatePublished < expiry.AbsoluteExpiration)
+                        {
+                            expiry.AbsoluteExpiration = publishedDocument.DatePublished;
+                        }
 
                         cache.Set(publishedDocumentsKey, publishedDocumentCollection, expiry);
                     }
@@ -55,7 +71,7 @@ namespace Poster.Core
         {
             // MemoryCache keys are case sensitive
             // We could have collisions in MemoryCache if we don't namespace our own cache keys
-            return "lazor:publishedDocumentCollection:" + fileName.ToLowerInvariant();
+            return "poster:publishedDocumentCollection:" + fileName.ToLowerInvariant();
         }
     }
 }

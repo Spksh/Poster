@@ -71,7 +71,7 @@ namespace Poster.Core
         {
             // MemoryCache keys are case sensitive
             // We could have collisions in MemoryCache if we don't namespace our own cache keys
-            return "lazor:template:" + templateName.ToLowerInvariant();
+            return "poster:template:" + templateName.ToLowerInvariant();
         }
     }
 }

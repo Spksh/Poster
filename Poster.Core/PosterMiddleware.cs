@@ -15,9 +15,9 @@ namespace Poster.Core
 
         public Func<IDictionary<string, object>, Task> Next { get; set; }
 
-        public PosterMiddleware(IContentStore store, string defaultDocument = null, string defaultTemplate = null, Encoding encoding = null)
+        public PosterMiddleware(IContentStore store, string defaultDocumentFile = null, string defaultTemplateFile = null, string publishedDocumentsFile = null, Encoding encoding = null)
         {
-            ResponseCache = new HttpResponseCache(store, defaultTemplate ?? Default.Template, encoding ?? Default.Encoding);
+            ResponseCache = new HttpResponseCache(store, defaultDocumentFile, defaultTemplateFile, publishedDocumentsFile, encoding);
         }
 
         public void Initialize(Func<IDictionary<string, object>, Task> next)
@@ -48,14 +48,10 @@ namespace Poster.Core
 
             if (response == null)
             {
-                //context.Response.StatusCode = 404;
-                //context.Response.ReasonPhrase = "Not Found";
-
-                //// Add expires header to politely ask the client not to spam us for non-existent documents
-                //context.Response.ETag = string.Empty;
-                //context.Response.Expires = DateTime.UtcNow.Add(DefaultExpiry);
+                // Maybe someone further down the pipeline is supposed to handle this instead
                 await Next.Invoke(environment);
 
+                // Bail out
                 return;
             }
 

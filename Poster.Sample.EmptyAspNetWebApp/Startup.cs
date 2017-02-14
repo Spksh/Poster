@@ -18,8 +18,9 @@ namespace Poster.Sample.EmptyAspNetWebApp
                     store: new FileSystemContentStore(
                         HostingEnvironment.MapPath(Default.VirtualPath)
                     ),
-                    defaultDocument: ".md",
-                    defaultTemplate: ".template"
+                    //defaultDocumentFile: ".md",
+                    publishedDocumentsFile: ".published",
+                    defaultTemplateFile: ".template"
                 ));
             });
         }
