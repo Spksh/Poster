@@ -1,13 +1,3 @@
 # TODO
-- README.md
-- error handling for scripts, dump position out
-- storage plugins, e.g. azure blob, s3
-    - http://benfoster.io/blog/monitoring-files-in-azure-blob-storage
-    - https://docs.microsoft.com/en-nz/azure/azure-functions/functions-bindings-storage-blob#a-idstorageblobtriggera-azure-storage-blob-trigger
-- index listing/default/latest article convention
-    - currently relying on .published list because ASP.NET file change monitoring is broken for directories
-    - find latest?
-    - cache? how to flush if index.md is added? 
-    - need a func to orderby
-- cache documents somewhere in a list for grouping/sorting/lookups
-- sitemap
+- Add informative README.md with quick samples
+- See Issues for TODO list
