@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading;
@@ -15,26 +14,25 @@ namespace Poster.Core
         private static readonly SemaphoreSlim Lock = new SemaphoreSlim(1, 1);
 
         private readonly IContentStore _store;
-        private readonly string _defaultDocument;
-        private readonly string _publishedDocuments;
+        private readonly IDefaultDocumentProvider _defaultDocumentProvider;
+
         private readonly string _defaultTemplate;
         private readonly Encoding _encoding;
 
-        public HttpResponseCache(IContentStore store, string defaultDocumentFile = null, string defaultTemplateFile = null, string publishedDocumentsFile = null, Encoding encoding = null)
+        public HttpResponseCache(IContentStore store, IDefaultDocumentProvider defaultDocumentProvider, string defaultTemplateFile = null, Encoding encoding = null)
         {
             _store = store;
-            _defaultDocument = defaultDocumentFile;
-            _publishedDocuments = publishedDocumentsFile;
+            _defaultDocumentProvider = defaultDocumentProvider;
             _defaultTemplate = defaultTemplateFile ?? Default.Template;
             _encoding = encoding ?? Default.Encoding;
         }
 
         public async Task<HttpResponse> GetCachedResponseAsync(IOwinContext context, string requestPath)
         {
-            return await GetCachedResponseAsync(context, _store, _defaultDocument, _publishedDocuments, _defaultTemplate, requestPath, _encoding);
+            return await GetCachedResponseAsync(context, _store, _defaultDocumentProvider, _defaultTemplate, requestPath, _encoding);
         }
 
-        public static async Task<HttpResponse> GetCachedResponseAsync(IOwinContext context, IContentStore store, string defaultDocument = null, string publishedDocuments = null, string defaultTemplate = null, string requestPath = null, Encoding encoding = null)
+        public static async Task<HttpResponse> GetCachedResponseAsync(IOwinContext context, IContentStore store, IDefaultDocumentProvider defaultDocumentProvider, string defaultTemplate = null, string requestPath = null, Encoding encoding = null)
         {
             // Bail early if the Path helper methods below would explode anyway
             // This also fails on directory separators in the segment because we expect only a single segment as a cache key (e.g. "/blog/something/post-one" will be looked up as "something/post-one" and will fail)
@@ -73,43 +71,10 @@ namespace Poster.Core
                         // But which document should we return?
                         if (string.IsNullOrWhiteSpace(requestPath))
                         {
-                            // If we've explicitly set a default document, we'll always return that
-                            if (defaultDocument != null)
-                            {
-                                requestPath = defaultDocument;
-                            }
-                            // If we've got a list of published documents, find our latest published document
-                            else if (publishedDocuments != null)
-                            {
-                                List<PublishedDocument> published = await PublishedDocumentCollectionCache.GetCachedPublishedDocumentCollectionAsync(store, publishedDocuments, encoding);
+                            IDefaultDocument defaultDocument = await defaultDocumentProvider.Get(store, encoding);
 
-                                if (published != null && published.Any())
-                                {
-                                    // We'll need to add a dependency on the list of published documents
-                                    // We support "future" publish dates
-                                    // Our PublishedDocumentCollection will be evicted from cache when the next "future" date is reached, or if someone edits the file
-                                    // That will cause us to rebuild this response
-                                    cacheDependencies.Add(PublishedDocumentCollectionCache.CacheKey(publishedDocuments));
-
-                                    // Get the latest published document that has a published date that's not in the future
-                                    DateTime now = DateTime.UtcNow;
-
-                                    // The collection contains potentially thousands of documents
-                                    // We expect the collection to be sorted by DatePublished, descending
-                                    // Find the first document with a DatePublished before now
-                                    requestPath = published.First(p => p.DatePublished <= now).Name;
-                                }
-                                else
-                                {
-                                    // We can't find the expected PublishedDocumentCollection
-                                    // But we might still have a ".md" file, and we should allow that
-                                    requestPath = string.Empty;
-                                }
-                            }
-                            else
-                            {
-                                requestPath = string.Empty;
-                            }
+                            cacheDependencies.AddRange(defaultDocument.CacheDependencies);
+                            requestPath = defaultDocument.FileName;
                         }
 
                         // Our requestPath probably does not include the .md file extension if a user is browsing the site

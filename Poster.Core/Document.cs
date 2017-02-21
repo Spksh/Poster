@@ -10,7 +10,7 @@ using YamlDotNet.Serialization;
 
 namespace Poster.Core
 {
-    public class Document
+    public class Document : ICacheable
     {
         public CacheItemPolicy Expiry { get; set; }
 

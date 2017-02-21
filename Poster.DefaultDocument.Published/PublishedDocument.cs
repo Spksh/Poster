@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Poster.Core
+namespace Poster.DefaultDocument.Published
 {
     public class PublishedDocument
     {

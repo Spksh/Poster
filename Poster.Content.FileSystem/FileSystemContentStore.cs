@@ -8,26 +8,16 @@ namespace Poster.Content.FileSystem
 {
     public class FileSystemContentStore : IContentStore
     {
-        private string _pathToContent;
+        private readonly string _pathToContent;
 
         public FileSystemContentStore(string pathToContent)
         {
             _pathToContent = pathToContent;
         }
 
-        public async Task<Document> ReadDocumentAsync(string fileName, Encoding encoding = null)
+        public async Task<T> ReadAsync<T>(string fileName, Func<Stream, Encoding, Task<T>> fromStreamAsync, Encoding encoding = null) where T : class, ICacheable
         {
-            return await FileReader.ReadDocumentAsync(ResolveToPhysicalPath(fileName), encoding);
-        }
-
-        public async Task<Template> ReadTemplateAsync(string templateName, Encoding encoding = null)
-        {
-            return await FileReader.ReadTemplateAsync(ResolveToPhysicalPath(templateName), encoding);
-        }
-
-        public PublishedDocumentCollection ReadPublishedDocumentCollection(string fileName, Encoding encoding = null)
-        {
-            return FileReader.ReadPublishedDocumentCollection(ResolveToPhysicalPath(fileName), encoding);
+            return await FileReader.ReadAsync<T>(ResolveToPhysicalPath(fileName), fromStreamAsync, encoding);
         }
 
         public string ResolveToPhysicalPath(string fileName)

@@ -93,7 +93,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,6 +109,10 @@
     <ProjectReference Include="..\Poster.Core\Poster.Core.csproj">
       <Project>{d681f045-d9c4-4ea3-b906-88c679dc3be3}</Project>
       <Name>Poster.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Poster.DefaultDocument.Published\Poster.DefaultDocument.Published.csproj">
+      <Project>{0b58a81d-f163-4215-85de-ec09e8d9f7b5}</Project>
+      <Name>Poster.DefaultDocument.Published</Name>
     </ProjectReference>
     <ProjectReference Include="..\Poster.Template\Poster.Template.csproj">
       <Project>{3aa3ccad-d44b-4963-be71-2c6fb82ffa2f}</Project>

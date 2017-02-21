@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Poster.Core
 {
-    public class Template
+    public class Template : ICacheable
     {
         public CacheItemPolicy Expiry { get; set; }
 

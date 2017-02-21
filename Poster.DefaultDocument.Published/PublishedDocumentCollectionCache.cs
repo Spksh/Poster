@@ -4,8 +4,9 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Poster.Core;
 
-namespace Poster.Core
+namespace Poster.DefaultDocument.Published
 {
     public static class PublishedDocumentCollectionCache
     {
@@ -29,7 +30,7 @@ namespace Poster.Core
 
                     if (publishedDocumentCollection == null)
                     {
-                        publishedDocumentCollection = store.ReadPublishedDocumentCollection(fileName, encoding);
+                        publishedDocumentCollection = await store.ReadAsync(fileName, PublishedDocumentCollection.FromStream, encoding);
 
                         // We don't cache responses for non-existent files 
                         if (publishedDocumentCollection == null || !publishedDocumentCollection.Any())

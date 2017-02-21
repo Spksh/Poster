@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,10 +7,6 @@ namespace Poster.Core
 {
     public interface IContentStore
     {
-        Task<Document> ReadDocumentAsync(string fileName, Encoding encoding = null);
-
-        Task<Template> ReadTemplateAsync(string templateName, Encoding encoding = null);
-
-        PublishedDocumentCollection ReadPublishedDocumentCollection(string fileName, Encoding encoding = null);
+        Task<T> ReadAsync<T>(string fileName, Func<Stream, Encoding, Task<T>> fromStreamAsync, Encoding encoding = null) where T : class, ICacheable;
     }
 }

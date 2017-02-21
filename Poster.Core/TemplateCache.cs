@@ -41,7 +41,7 @@ namespace Poster.Core
 
                     if (compiledTemplate == null)
                     {
-                        Template template = await store.ReadTemplateAsync(templateName, encoding);
+                        Template template = await store.ReadAsync(templateName, Template.FromStreamAsync, encoding);
 
                         // We don't cache responses for non-existent files because I don't want to write a CacheItemPolicy that has a ChangeMonitor for the entire directory
                         if (template == null)

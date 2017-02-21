@@ -3,6 +3,7 @@ using Microsoft.Owin;
 using Owin;
 using Poster.Content.FileSystem;
 using Poster.Core;
+using Poster.DefaultDocument.Published;
 
 [assembly: OwinStartup(typeof(Poster.Sample.EmptyAspNetWebApp.Startup))]
 namespace Poster.Sample.EmptyAspNetWebApp
@@ -15,11 +16,15 @@ namespace Poster.Sample.EmptyAspNetWebApp
             app.Map("/blog", app2 =>
             {
                 app2.Use(new PosterMiddleware(
-                    store: new FileSystemContentStore(
+
+                    contentStore: new FileSystemContentStore(
                         HostingEnvironment.MapPath(Default.VirtualPath)
                     ),
-                    //defaultDocumentFile: ".md",
-                    publishedDocumentsFile: ".published",
+
+                    defaultDocumentProvider: new PublishedDefaultDocumentProvider(
+                        ".published"
+                    ),
+
                     defaultTemplateFile: ".template"
                 ));
             });

@@ -40,7 +40,7 @@ namespace Poster.Core
 
                     if (document == null)
                     {
-                        document = await store.ReadDocumentAsync(documentName, encoding);
+                        document = await store.ReadAsync(documentName, Document.FromStreamAsync, encoding);
 
                         // We don't cache responses for non-existent files because I don't want to write a CacheItemPolicy that has a ChangeMonitor for the entire directory
                         if (document == null)

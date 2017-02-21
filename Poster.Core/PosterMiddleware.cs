@@ -15,9 +15,9 @@ namespace Poster.Core
 
         public Func<IDictionary<string, object>, Task> Next { get; set; }
 
-        public PosterMiddleware(IContentStore store, string defaultDocumentFile = null, string defaultTemplateFile = null, string publishedDocumentsFile = null, Encoding encoding = null)
+        public PosterMiddleware(IContentStore contentStore, IDefaultDocumentProvider defaultDocumentProvider = null, string defaultTemplateFile = null, Encoding encoding = null)
         {
-            ResponseCache = new HttpResponseCache(store, defaultDocumentFile, defaultTemplateFile, publishedDocumentsFile, encoding);
+            ResponseCache = new HttpResponseCache(contentStore, defaultDocumentProvider, defaultTemplateFile, encoding);
         }
 
         public void Initialize(Func<IDictionary<string, object>, Task> next)
