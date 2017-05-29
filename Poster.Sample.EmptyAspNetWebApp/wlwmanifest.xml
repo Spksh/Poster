@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns="http://schemas.microsoft.com/wlw/manifest/weblog">
+  <options>
+    <!-- https://msdn.microsoft.com/en-us/library/bb463260.aspx -->
+    <!-- ..\GitHub\OpenLiveWriter\src\managed\OpenLiveWriter.BlogClient\Providers\BlogProvider.cs -->
+    <clientType>Metaweblog</clientType>
+    
+    <!-- Default options -->
+    <characterSet>utf-8</characterSet>
+    <supportsAutoUpdate>Yes</supportsAutoUpdate>
+    
+    <!-- Default capabilities expected for Metaweblog -->
+    <supportsPostAsDraft>Yes</supportsPostAsDraft>
+    <supportsFileUpload>Yes</supportsFileUpload>
+    <supportsCustomDate>Yes</supportsCustomDate>
+    <supportsCategories>Yes</supportsCategories>
+    <supportsCategoriesInline>Yes</supportsCategoriesInline>
+    <supportsMultipleCategories>Yes</supportsMultipleCategories>
+    
+    <!-- Extended capabilities -->
+    <!-- Supports the addition of new categories from the client via either inline specification or via the wp.addCategory method -->
+    <supportsNewCategories>Yes</supportsNewCategories>
+    <!-- Supports wp.getCategories and wp.addCategory -->
+    <supportsHierarchicalCategories>Yes</supportsHierarchicalCategories>
+    <!-- Previously unused categories included within the categories field are automatically added -->
+    <supportsNewCategoriesInline>Yes</supportsNewCategoriesInline>
+    <!-- Supports mt_keywords field of post struct -->
+    <supportsKeywords>Yes</supportsKeywords>
+    <!-- Supports wp_author field of post struct -->
+    <supportsAuthor>Yes</supportsAuthor>
+    <!-- Supports wp_slug and mt_basename fields of post struct -->
+    <supportsSlug>Yes</supportsSlug>
+    
+  </options>
+  <weblog>
+    <serviceName>Poster</serviceName>
+    <adminUrl><![CDATA[{blog-homepage-url}/admin]]></adminUrl>
+    <postEditingUrl><![CDATA[{blog-homepage-url}/api]]></postEditingUrl>
+  </weblog>
+</manifest>

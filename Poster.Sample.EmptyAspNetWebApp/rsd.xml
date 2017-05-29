@@ -1,0 +1,9 @@
+﻿<?xml version="1.0"?>
+<rsd version="1.0" xmlns="http://archipelago.phrasewise.com/rsd">
+	<service>
+		<engineName>Poster</engineName>
+		<apis>
+			<api name="MetaWeblog" preferred="true" apiLink="/api" blogID="1" />
+		</apis>
+	</service>
+</rsd>

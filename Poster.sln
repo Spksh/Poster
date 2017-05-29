@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poster.Sample.EmptyAspNetWe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poster.DefaultDocument.Published", "Poster.DefaultDocument.Published\Poster.DefaultDocument.Published.csproj", "{0B58A81D-F163-4215-85DE-EC09E8D9F7B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poster.MetaWeblogApi", "Poster.MetaWeblogApi\Poster.MetaWeblogApi.csproj", "{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{0B58A81D-F163-4215-85DE-EC09E8D9F7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B58A81D-F163-4215-85DE-EC09E8D9F7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B58A81D-F163-4215-85DE-EC09E8D9F7B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
