@@ -8,40 +8,59 @@ namespace Poster.Test
     [TestFixture]
     public class PasswordFixture
     {
-        [TestCase("MyPass", "KYyAgQ/QtGiAZVGtFgjZ2vF9goN3tbk8G+mp8mAQKNvI384FzIcmgpDXBPqGwqgB")]
-        [TestCase("MyPass", "0YvEFAs7vfoIUBfZeD2Gw6pDW3J0evg7usy92yKwtBkG6hWP1ZPlrHCF5Vsio5K/")]
-        [TestCase("MyPass", "CYBlkFYn0jQ2QJL2QP5GmHKKc9gnui5XU0kjiFrh7l5LTAWTEqhgqYMEXPba5BpY")]
+        [TestCase("MyPass", "$1a$10$ETAwacUaotSTWIHOTf8ELgLZI1mnvMphW9NKqxmwLZHltdN9SDbMVg==")]
+        [TestCase("MyPass", "$1a$10$lxVnWag/X5bLfqOCHwK7tWMQIwM79iUFAoRjZ/IZTnbZ0CIcP9ePJw==")]
+        [TestCase("MyPass", "$1a$16$40MvhSEMaChBhfXYPGwCbn9l1U+I+VUa7VK3wGfEpN2ciQ9hWgIx/w==")]
+        [TestCase("MyPass", "$1a$20$CvlsMnK+1liIKOURhARJEABLPw70lZ4fTLSgC5MFz8ENaamDiBl94g==")]
         public void PowerShellHashCompareTest(string suppliedPassword, string storedBase64String)
         {
             // PowerShell:
             // https://cmatskas.com/-net-password-hashing-using-pbkdf2/
             // https://lockmedown.com/hash-right-implementing-pbkdf2-net/
+            // https://www.owasp.org/index.php/Using_Rfc2898DeriveBytes_for_PBKDF2
             //
-            //function Get-Pbkdf2Hash([string]$textToHash)
+            //function Get-Pbkdf2Hash([string]$textToHash, [int]$cost = 10)
             //{
-            //	[byte[]]$hashed = new-object byte[] 48
-            //	[byte[]]$salt = new-object byte[] 24
+            //	[byte[]]$hashed = new-object byte[] 40
+            //	[byte[]]$salt = new-object byte[] 20
 
             //	$rng = new-object System.Security.Cryptography.RNGCryptoServiceProvider
-            //	[Void]$rng.GetBytes($salt, 0, 24)
+            //	[Void]$rng.GetBytes($salt, 0, 20)
             //	[Void]$salt.CopyTo($hashed, 0)
 
-            //	$pbkdf2 = new-object System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList $textToHash, $salt, 1000 
-            //	[Void]$pbkdf2.GetBytes(24).CopyTo($hashed, 24)
+            //	[int]$iterations = [System.Math]::Pow(2, $cost) 
 
-            //	return [System.Convert]::ToBase64String($hashed)
+            //	$pbkdf2 = new-object System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList $textToHash, $salt, $iterations
+            //	[Void]$pbkdf2.GetBytes(20).CopyTo($hashed, 20)
+
+            //	$output = new-object System.Text.StringBuilder
+
+            //	[Void]$output.Append("$")
+            //	[Void]$output.Append("1a")
+            //	[Void]$output.Append("$")
+            //	[Void]$output.Append($cost)
+            //	[Void]$output.Append("$")
+            //	[Void]$output.Append([System.Convert]::ToBase64String($hashed))
+
+            //	return $output.ToString()
             //}
 
-            byte[] stored = Convert.FromBase64String(storedBase64String);
-            byte[] storedSalt = new byte[24];
-            byte[] storedHash = new byte[24];
+            string[] segments = storedBase64String.Split(new char[] {'$'}, StringSplitOptions.RemoveEmptyEntries);
+
+            string version = segments[0]; // Unused until we change the hash function (e.g. by adding a secret verification)
+            int cost = int.Parse(segments[1]); // intertion count is 2 ^ cost, e.g. 10 is 1024, 20 is 1048576
+            int iterations = (int) Math.Pow(2, cost);
+
+            byte[] saltPlusHash = Convert.FromBase64String(segments[2]);
+            byte[] salt = new byte[20];
+            byte[] hash = new byte[20];
             
-            Array.Copy(stored, 0, storedSalt, 0, 24);
-            Array.Copy(stored, 24, storedHash, 0, 24);
+            Array.Copy(saltPlusHash, 0, salt, 0, 20);
+            Array.Copy(saltPlusHash, 20, hash, 0, 20);
 
-            byte[] computedHash = new Rfc2898DeriveBytes(suppliedPassword, storedSalt, 1000).GetBytes(24);
+            byte[] computedHash = new Rfc2898DeriveBytes(suppliedPassword, salt, iterations).GetBytes(20);
 
-            Assert.IsTrue(computedHash.SequenceEqual(storedHash));
+            Assert.IsTrue(computedHash.SequenceEqual(hash));
         }
     }
 }
