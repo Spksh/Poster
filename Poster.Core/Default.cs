@@ -6,8 +6,6 @@ namespace Poster.Core
     {
         public static Encoding Encoding = Encoding.UTF8;
 
-        public const string VirtualPath = "/App_Data";
-
         public const string Template = ".template";
 
         public const string Published = ".published";

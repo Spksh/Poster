@@ -48,7 +48,7 @@ namespace Poster.Test
             string[] segments = storedBase64String.Split(new char[] {'$'}, StringSplitOptions.RemoveEmptyEntries);
 
             string version = segments[0]; // Unused until we change the hash function (e.g. by adding a secret verification)
-            int cost = int.Parse(segments[1]); // intertion count is 2 ^ cost, e.g. 10 is 1024, 20 is 1048576
+            int cost = int.Parse(segments[1]); // interation count is 2 ^ cost, e.g. 10 is 1024, 20 is 1048576
             int iterations = (int) Math.Pow(2, cost);
 
             byte[] saltPlusHash = Convert.FromBase64String(segments[2]);

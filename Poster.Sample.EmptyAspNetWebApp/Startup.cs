@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
+using System.Runtime.Caching;
 using System.Web.Hosting;
 using Microsoft.Owin;
 using Owin;
@@ -19,28 +18,34 @@ namespace Poster.Sample.EmptyAspNetWebApp
     {
         public void Configuration(IAppBuilder app)
         {
+            JsonConfigurationProvider configuration = new JsonConfigurationProvider()
+                .With(HostingEnvironment.MapPath("/App_Data/config.json"))
+                .With(() => MemoryCache.Default);
+
+            JsonAuthenticationProvider authentication = new JsonAuthenticationProvider()
+                .With(configuration);
+
             // Branch to new pipeline 
             app.Map("/api", app2 =>
             {
-                app2.Use(async (context, next) =>
-                {
-                    Trace.WriteLine(context.Request.Uri);
+                //app2.Use(async (context, next) =>
+                //{
+                //    Trace.WriteLine(context.Request.Uri);
 
-                    using (StreamReader reader = new StreamReader(context.Request.Body))
-                    {
-                        Trace.WriteLine(await reader.ReadToEndAsync());
-                    }
+                //    using (StreamReader reader = new StreamReader(context.Request.Body))
+                //    {
+                //        Trace.WriteLine(await reader.ReadToEndAsync());
+                //    }
 
-                    context.Request.Body.Position = 0;
+                //    context.Request.Body.Position = 0;
 
-                    await next.Invoke();
-                });
+                //    await next.Invoke();
+                //});
 
                 app2.Use(new XmlRpcFaultMiddleware()
-                    // Do some logging
-                    .OnFaulted((s, e) =>
+                    .OnFaulted((sender, exception) =>
                     {
-                        XmlRpcException fault = e as XmlRpcException;
+                        XmlRpcException fault = exception as XmlRpcException;
 
                         if (fault != null)
                         {
@@ -55,15 +60,16 @@ namespace Poster.Sample.EmptyAspNetWebApp
                         }
                         else
                         {
-                            Trace.WriteLine($"ERROR: {e.Source} {e.Message}");
-                            Trace.WriteLine(e.StackTrace);
+                            Trace.WriteLine($"ERROR: {exception.Source} {exception.Message}");
+                            Trace.WriteLine(exception.StackTrace);
                         }
                     }));
 
                 app2.Use(new XmlRpcRequestFilterMiddleware());
 
                 app2.Use(new XmlRpcMiddleware()
-                    .Add(new MetaWeblogApiResponder().WithGetUsersBlogs(async (appkey, username, password) => { return new List<Blog>(); })));
+                    .Add(new MetaWeblogApiResponder(authentication))
+                );
             });
 
             // Branch to new pipeline 
@@ -72,7 +78,7 @@ namespace Poster.Sample.EmptyAspNetWebApp
                 app2.Use(new PosterMiddleware(
 
                     contentStore: new FileSystemContentStore(
-                        HostingEnvironment.MapPath(Default.VirtualPath)
+                        HostingEnvironment.MapPath("/App_Data")
                     ),
 
                     defaultDocumentProvider: new PublishedDefaultDocumentProvider(

@@ -14,66 +14,84 @@ namespace Poster.MetaWeblogApi
     // https://codex.wordpress.org/XML-RPC_MovableType_API
     public class MetaWeblogApiResponder
     {
-        public delegate Task<List<Blog>> GetUsersBlogsFunc(string appkey, string username, string password);
+        private IAuthenticationProvider _authenticationProvider;
 
-        public delegate Task<List<Category>> GetCategoriesFunc(string blogId, string username, string password);
+        //public delegate Task<List<Blog>> GetUsersBlogsFunc(string appkey, string username, string password);
 
-        public delegate Task<string> NewCategoryFunc(string blogId, string username, string password, NewCategory category);
+        //public delegate Task<List<Category>> GetCategoriesFunc(string blogId, string username, string password);
 
-        public delegate Task<List<Post>> GetRecentPostsFunc(string blogId, string username, string password, int numberOfPosts);
+        //public delegate Task<string> NewCategoryFunc(string blogId, string username, string password, NewCategory category);
 
-        public delegate Task<Post> GetPostFunc(string postId, string username, string password);
+        //public delegate Task<List<Post>> GetRecentPostsFunc(string blogId, string username, string password, int numberOfPosts);
 
-        public delegate Task<string> NewPostFunc(string blogId, string username, string password, NewPost content, bool publish);
+        //public delegate Task<Post> GetPostFunc(string postId, string username, string password);
 
-        public delegate Task<bool> EditPostFunc(string postId, string username, string password, NewPost content, bool publish);
+        //public delegate Task<string> NewPostFunc(string blogId, string username, string password, NewPost content, bool publish);
 
-        public delegate Task<bool> DeletePostFunc(string appkey, string postId, string username, string password, bool publish);
+        //public delegate Task<bool> EditPostFunc(string postId, string username, string password, NewPost content, bool publish);
 
-        public delegate Task<List<Author>> GetAuthorsFunc(string blogId, string username, string password);
+        //public delegate Task<bool> DeletePostFunc(string appkey, string postId, string username, string password, bool publish);
 
-        public delegate Task<List<PostCategory>> GetPostCategoriesFunc(string postId, string username, string password);
+        //public delegate Task<List<Author>> GetAuthorsFunc(string blogId, string username, string password);
 
-        public delegate Task<bool> SetPostCategorieFuncs(string postId, string username, string password, List<PostCategory> categories);
+        //public delegate Task<List<PostCategory>> GetPostCategoriesFunc(string postId, string username, string password);
 
-        public delegate Task<MediaObject> NewMediaObjectFunc(string blogId, string username, string password, NewMediaObject data);
+        //public delegate Task<bool> SetPostCategorieFuncs(string postId, string username, string password, List<PostCategory> categories);
+
+        //public delegate Task<MediaObject> NewMediaObjectFunc(string blogId, string username, string password, NewMediaObject data);
 
 
-        private GetUsersBlogsFunc _getUsersBlogs;
-        private GetCategoriesFunc _getCategories;
-        private NewCategoryFunc _newCategory;
-        private GetRecentPostsFunc _getRecentPosts;
-        private GetPostFunc _getPost;
-        private NewPostFunc _newPost;
-        private EditPostFunc _editPost;
-        private DeletePostFunc _deletePost;
-        private GetAuthorsFunc _getAuthors;
-        private GetPostCategoriesFunc _getPostCategories;
-        private SetPostCategorieFuncs _setPostCategorie;
-        private NewMediaObjectFunc _newMediaObject;
+        //private GetUsersBlogsFunc _getUsersBlogs;
+        //private GetCategoriesFunc _getCategories;
+        //private NewCategoryFunc _newCategory;
+        //private GetRecentPostsFunc _getRecentPosts;
+        //private GetPostFunc _getPost;
+        //private NewPostFunc _newPost;
+        //private EditPostFunc _editPost;
+        //private DeletePostFunc _deletePost;
+        //private GetAuthorsFunc _getAuthors;
+        //private GetPostCategoriesFunc _getPostCategories;
+        //private SetPostCategorieFuncs _setPostCategorie;
+        //private NewMediaObjectFunc _newMediaObject;
 
-        [XmlRpcIgnore]
-        public MetaWeblogApiResponder With(IBlogProvider provider)
+        //[XmlRpcIgnore]
+        //public MetaWeblogApiResponder With(IBlogProvider provider)
+        //{
+        //    _getUsersBlogs = provider.GetUsersBlogs;
+        //    _getCategories = provider.GetCategories;
+        //    _newCategory = provider.NewCategory;
+        //    _getRecentPosts = provider.GetRecentPosts;
+        //    _getPost = provider.GetPost;
+        //    _newPost = provider.NewPost;
+        //    _editPost = provider.EditPost;
+        //    _deletePost = provider.DeletePost;
+        //    _getAuthors = provider.GetAuthors;
+        //    _getPostCategories = provider.GetPostCategories;
+        //    _setPostCategorie = provider.SetPostCategories;
+        //    _newMediaObject = provider.NewMediaObject;
+
+        //    return this;
+        //}
+
+        //public MetaWeblogApiResponder WithGetUsersBlogs(GetUsersBlogsFunc getUsersBlogs)
+        //{
+        //    _getUsersBlogs = getUsersBlogs;
+
+        //    return this;
+        //}
+
+        public MetaWeblogApiResponder()
         {
-            _getUsersBlogs = provider.GetUsersBlogs;
-            _getCategories = provider.GetCategories;
-            _newCategory = provider.NewCategory;
-            _getRecentPosts = provider.GetRecentPosts;
-            _getPost = provider.GetPost;
-            _newPost = provider.NewPost;
-            _editPost = provider.EditPost;
-            _deletePost = provider.DeletePost;
-            _getAuthors = provider.GetAuthors;
-            _getPostCategories = provider.GetPostCategories;
-            _setPostCategorie = provider.SetPostCategories;
-            _newMediaObject = provider.NewMediaObject;
-
-            return this;
         }
 
-        public MetaWeblogApiResponder WithGetUsersBlogs(GetUsersBlogsFunc getUsersBlogs)
+        public MetaWeblogApiResponder(IAuthenticationProvider authenticationProvider)
         {
-            _getUsersBlogs = getUsersBlogs;
+            _authenticationProvider = authenticationProvider;
+        }
+
+        public MetaWeblogApiResponder With(IAuthenticationProvider authenticationProvider)
+        {
+            _authenticationProvider = authenticationProvider;
 
             return this;
         }
@@ -82,29 +100,39 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("blogger.getUsersBlogs")]
         public async Task<List<Blog>> GetUsersBlogs(string appkey, string username, string password)
         {
-            //return new List<Blog>
-            //{
-            //    new Blog
-            //    {
-            //        BlogId = "1",
-            //        BlogName = "Blog 1",
-            //        Url = "/blog1"
-            //    },
-            //    new Blog
-            //    {
-            //        BlogId = "2",
-            //        BlogName = "Blog 2",
-            //        Url = ""
-            //    }
-            //};
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
 
-            return await _getUsersBlogs(appkey, username, password);
+            return new List<Blog>
+            {
+                new Blog
+                {
+                    BlogId = "1",
+                    BlogName = "Blog 1",
+                    Url = "/blog1"
+                },
+                new Blog
+                {
+                    BlogId = "2",
+                    BlogName = "Blog 2",
+                    Url = ""
+                }
+            };
+
+            //return await _getUsersBlogs(appkey, username, password);
         }
 
         [XmlRpcMethod("wp.getCategories")]
         [XmlRpcMethod("metaWeblog.getCategories")]
         public async Task<List<Category>> GetCategories(string blogId, string username, string password)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new List<Category>
             {
                 new Category
@@ -153,12 +181,22 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("wp.newCategory")]
         public async Task<string> NewCategory(string blogId, string username, string password, NewCategory category)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return "5";
         }
 
         [XmlRpcMethod("metaWeblog.getRecentPosts")]
         public async Task<List<Post>> GetRecentPosts(string blogId, string username, string password, int numberOfPosts)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new List<Post>
             {
                 new Post
@@ -184,6 +222,11 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("metaWeblog.getPost")]
         public async Task<Post> GetPost(string postId, string username, string password)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new Post
             {
                 PostId = "1",
@@ -206,12 +249,22 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("metaWeblog.newPost")]
         public async Task<string> NewPost(string blogId, string username, string password, NewPost content, bool publish)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return "2";
         }
 
         [XmlRpcMethod("metaWeblog.editPost")]
         public async Task<bool> EditPost(string postId, string username, string password, NewPost content, bool publish)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return true;
         }
 
@@ -219,12 +272,22 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("metaWeblog.deletePost ")]
         public async Task<bool> DeletePost(string appkey, string postId, string username, string password, bool publish)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return true;
         }
 
         [XmlRpcMethod("wp.getAuthors")]
         public async Task<List<Author>> GetAuthors(string blogId, string username, string password)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new List<Author>
             {
                 new Author
@@ -251,6 +314,11 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("mt.getPostCategories")]
         public async Task<List<PostCategory>> GetPostCategories(string postId, string username, string password)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new List<PostCategory>
             {
                 new PostCategory
@@ -270,12 +338,22 @@ namespace Poster.MetaWeblogApi
         [XmlRpcMethod("mt.setPostCategories")]
         public async Task<bool> SetPostCategories(string postId, string username, string password, List<PostCategory> categories)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return true;
         }
 
         [XmlRpcMethod("metaWeblog.newMediaObject")]
         public async Task<MediaObject> NewMediaObject(string blogId, string username, string password, NewMediaObject data)
         {
+            if (!await _authenticationProvider.IsAuthenticatedAsync(username, password))
+            {
+                throw new XmlRpcException(403, "Forbidden");
+            }
+
             return new MediaObject
             {
                 Id = "1",

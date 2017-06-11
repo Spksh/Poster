@@ -59,6 +59,7 @@
     <Compile Include="Author.cs" />
     <Compile Include="Blog.cs" />
     <Compile Include="Category.cs" />
+    <Compile Include="IAuthenticationProvider.cs" />
     <Compile Include="IBlogProvider.cs" />
     <Compile Include="MediaObject.cs" />
     <Compile Include="MetaWeblogApiResponder.cs" />

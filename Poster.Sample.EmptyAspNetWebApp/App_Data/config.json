@@ -1,0 +1,15 @@
+﻿{
+    "authentication": {
+        "users": [
+            {
+                "username": "administrator",
+                "password": "$1a$10$ETAwacUaotSTWIHOTf8ELgLZI1mnvMphW9NKqxmwLZHltdN9SDbMVg=="
+            }
+        ]
+    },
+
+    "poster": {
+        "templateFile": ".template",
+        "publishedFile": ".published"
+    } 
+}
