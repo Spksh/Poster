@@ -60,7 +60,12 @@
     <Compile Include="Blog.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="IAuthenticationProvider.cs" />
+    <Compile Include="IAuthorProvider.cs" />
     <Compile Include="IBlogProvider.cs" />
+    <Compile Include="ICategoryProvider.cs" />
+    <Compile Include="IMediaObjectProvider.cs" />
+    <Compile Include="IPostProvider.cs" />
+    <Compile Include="JsonAuthenticationProvider.cs" />
     <Compile Include="MediaObject.cs" />
     <Compile Include="MetaWeblogApiResponder.cs" />
     <Compile Include="NewCategory.cs" />
@@ -72,6 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Poster.Core\Poster.Core.csproj">
+      <Project>{d681f045-d9c4-4ea3-b906-88c679dc3be3}</Project>
+      <Name>Poster.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace Poster.MetaWeblogApi
 {
-    public interface IBlogProvider
+    public interface IAuthorProvider
     {
-        Task<List<Blog>> GetBlogs(string username);
+        Task<List<Author>> GetAuthors(string blogId);
     }
 }

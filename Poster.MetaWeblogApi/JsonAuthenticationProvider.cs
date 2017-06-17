@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Poster.MetaWeblogApi;
+using Poster.Core;
 
-namespace Poster.Core
+namespace Poster.MetaWeblogApi
 {
     public class JsonAuthenticationProvider : IAuthenticationProvider
     {

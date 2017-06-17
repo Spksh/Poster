@@ -22,9 +22,6 @@ namespace Poster.Sample.EmptyAspNetWebApp
                 .With(HostingEnvironment.MapPath("/App_Data/config.json"))
                 .With(() => MemoryCache.Default);
 
-            JsonAuthenticationProvider authentication = new JsonAuthenticationProvider()
-                .With(configuration);
-
             // Branch to new pipeline 
             app.Map("/api", app2 =>
             {
@@ -68,7 +65,7 @@ namespace Poster.Sample.EmptyAspNetWebApp
                 app2.Use(new XmlRpcRequestFilterMiddleware());
 
                 app2.Use(new XmlRpcMiddleware()
-                    .Add(new MetaWeblogApiResponder(authentication))
+                    .Add(new MetaWeblogApiResponder(new JsonAuthenticationProvider(configuration)))
                 );
             });
 

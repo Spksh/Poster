@@ -74,7 +74,6 @@
     <Compile Include="ICacheable.cs" />
     <Compile Include="IContentStore.cs" />
     <Compile Include="IDefaultDocumentProvider.cs" />
-    <Compile Include="JsonAuthenticationProvider.cs" />
     <Compile Include="JsonConfigurationProvider.cs" />
     <Compile Include="PathExtensions.cs" />
     <Compile Include="PosterMiddleware.cs" />
@@ -93,10 +92,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Poster.MetaWeblogApi\Poster.MetaWeblogApi.csproj">
-      <Project>{F52FAC02-F049-4CCD-8CEA-2B32013E5A11}</Project>
-      <Name>Poster.MetaWeblogApi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Poster.Template\Poster.Template.csproj">
       <Project>{3aa3ccad-d44b-4963-be71-2c6fb82ffa2f}</Project>
       <Name>Poster.Template</Name>
