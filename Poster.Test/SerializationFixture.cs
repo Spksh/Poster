@@ -1,32 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
+using SharpYaml;
+using SharpYaml.Events;
 
 namespace Poster.Test
 {
     [TestFixture]
     public class SerializationFixture
     {
-        [TestCase(@"D:\Users\Spksh\Documents\Projects\Poster\Poster.Sample.EmptyAspNetWebApp\App_Data\config.yml")]
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            Environment.CurrentDirectory = TestContext.CurrentContext.TestDirectory;
+        }
+
+        [TestCase(@"..\..\..\Poster.Sample.EmptyAspNetWebApp\App_Data\comments-enabled.md")]
         public void DeserializeConfiguration(string filePath)
         {
             using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
             using (StreamReader reader = new StreamReader(file, Encoding.UTF8))
             {
-                //// Set up YAML parser
-                //// We only want to read the first YAML "document"
-                //// So we instruct the parser to read StreamStart, then DocumentStart
-                //Parser parser = new Parser(reader);
-                //parser.Expect<StreamStart>();
-                //parser.Expect<DocumentStart>();
+                EventReader events = new EventReader(new Parser(reader));
+                events.Expect<StreamStart>();
+                events.Expect<DocumentStart>();
+
+                Dictionary<object, object> result = new SharpYaml.Serialization.Serializer().Deserialize<Dictionary<object, object>>(events);
+
+                Console.WriteLine(result);
+                Console.WriteLine(reader.ReadToEnd());
             }
 
         }
