@@ -17,28 +17,16 @@ namespace Poster.MetaWeblogApi
     {
         public IAuthenticationProvider AuthenticationProvider { get; set; }
 
-        public IAuthorProvider AuthorProvider { get; set; }
-
-        public IBlogProvider BlogProvider { get; set; }
-
-        public ICategoryProvider CategoryProvider { get; set; }
-
-        public IMediaObjectProvider MediaObjectProvider { get; set; }
-
-        public IPostProvider PostProvider { get; set; }
+        public IMetaWeblogProvider MetaWeblogProvider { get; set; }
 
         public MetaWeblogApiResponder()
         {
         }
 
-        public MetaWeblogApiResponder(IAuthenticationProvider authenticationProvider)
+        public MetaWeblogApiResponder(IAuthenticationProvider authenticationProvider, IMetaWeblogProvider metaWeblogProvider)
         {
             AuthenticationProvider = authenticationProvider;
-            //AuthorProvider = authorProvider;
-            //BlogProvider = blogProvider;
-            //CategoryProvider = categoryProvider;
-            //MediaObjectProvider = mediaObjectProvider;
-            //PostProvider = postProvider;
+            MetaWeblogProvider = metaWeblogProvider;
         }
 
         public MetaWeblogApiResponder With(IAuthenticationProvider authenticationProvider)
@@ -48,40 +36,14 @@ namespace Poster.MetaWeblogApi
             return this;
         }
 
-        public MetaWeblogApiResponder With(IAuthorProvider authorProvider)
+
+        public MetaWeblogApiResponder With(IMetaWeblogProvider metaWeblogProvider)
         {
-            AuthorProvider = authorProvider;
+            MetaWeblogProvider = metaWeblogProvider;
 
             return this;
         }
 
-        public MetaWeblogApiResponder With(IBlogProvider blogProvider)
-        {
-            BlogProvider = blogProvider;
-
-            return this;
-        }
-
-        public MetaWeblogApiResponder With(ICategoryProvider categoryProvider)
-        {
-            CategoryProvider = categoryProvider;
-
-            return this;
-        }
-
-        public MetaWeblogApiResponder With(IMediaObjectProvider mediaObjectProvider)
-        {
-            MediaObjectProvider = mediaObjectProvider;
-
-            return this;
-        }
-
-        public MetaWeblogApiResponder With(IPostProvider postProvider)
-        {
-            PostProvider = postProvider;
-
-            return this;
-        }
 
         [XmlRpcMethod("metaWeblog.getUsersBlogs")]
         [XmlRpcMethod("blogger.getUsersBlogs")]
@@ -92,7 +54,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await BlogProvider.GetBlogs(username);
+            return await MetaWeblogProvider.GetBlogs(username);
 
             return new List<Blog>
             {
@@ -120,7 +82,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return CategoryProvider.GetCategories(blogId);
+            return MetaWeblogProvider.GetCategories(blogId);
 
             return new List<Category>
             {
@@ -175,7 +137,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await CategoryProvider.AddCategory(category);
+            return await MetaWeblogProvider.AddCategory(category);
 
             return "5";
         }
@@ -188,7 +150,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.GetRecentPosts(numberOfPosts);
+            return await MetaWeblogProvider.GetRecentPosts(numberOfPosts);
 
             return new List<Post>
             {
@@ -220,7 +182,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.GetPost(postId);
+            return await MetaWeblogProvider.GetPost(postId);
 
             return new Post
             {
@@ -249,7 +211,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.AddPost(content, publish);
+            return await MetaWeblogProvider.AddPost(content, publish);
 
             return "2";
         }
@@ -262,7 +224,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.EditPost(content, publish);
+            return await MetaWeblogProvider.EditPost(content, publish);
         }
 
         [XmlRpcMethod("blogger.deletePost")]
@@ -274,7 +236,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.DeletePost(postId);
+            return await MetaWeblogProvider.DeletePost(postId);
         }
 
         [XmlRpcMethod("wp.getAuthors")]
@@ -285,7 +247,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await AuthorProvider.GetAuthors(blogId);
+            return await MetaWeblogProvider.GetAuthors(blogId);
 
             return new List<Author>
             {
@@ -318,7 +280,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.GetCategories(postId);
+            return await MetaWeblogProvider.GetPostCategories(postId);
 
             return new List<PostCategory>
             {
@@ -344,7 +306,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await PostProvider.SetCategories(postId, categories);
+            return await MetaWeblogProvider.SetPostCategories(postId, categories);
         }
 
         [XmlRpcMethod("metaWeblog.newMediaObject")]
@@ -355,7 +317,7 @@ namespace Poster.MetaWeblogApi
                 throw new XmlRpcException(403, "Forbidden");
             }
 
-            return await MediaObjectProvider.AddMediaObject(blogId, data);
+            return await MetaWeblogProvider.AddMediaObject(blogId, data);
 
             return new MediaObject
             {

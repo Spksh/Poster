@@ -65,7 +65,9 @@ namespace Poster.Sample.EmptyAspNetWebApp
                 app2.Use(new XmlRpcRequestFilterMiddleware());
 
                 app2.Use(new XmlRpcMiddleware()
-                    .Add(new MetaWeblogApiResponder(new JsonAuthenticationProvider(configuration)))
+                    .Add(new MetaWeblogApiResponder()
+                        .With(new JsonAuthenticationProvider(configuration))
+                        .With(new JsonMetaWeblogProvider(configuration)))
                 );
             });
 
